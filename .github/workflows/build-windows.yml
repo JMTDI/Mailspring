@@ -1,0 +1,47 @@
+name: Build Mailspring for Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install windows-build-tools (for native modules)
+        run: |
+          npm install --global --production windows-build-tools
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Bootstrap project
+        run: npm run bootstrap
+
+      - name: Build project
+        run: npm run build
+
+      - name: Package Windows Installer
+        run: npm run package-win
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mailspring-windows-installer
+          path: |
+            build\*.exe
+            dist\*.exe
