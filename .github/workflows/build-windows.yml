@@ -22,10 +22,6 @@ jobs:
           node-version: 'lts/*'
           cache: 'npm'
 
-      - name: Install windows-build-tools (for native modules)
-        run: |
-          npm install --global --production windows-build-tools
-
       - name: Install dependencies
         run: npm install
 
